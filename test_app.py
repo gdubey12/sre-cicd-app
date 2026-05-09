@@ -11,7 +11,7 @@ def test_hello(client):
     response = client.get('/')
     assert response.status_code == 200
     data = response.get_json()
-    assert data['message'] == 'Wrong message'  # ← intentional bug
+    assert data['message'] == 'Hello from SRE Labs'  # ← intentional bug
 
 def test_health(client):
     response = client.get('/health')
