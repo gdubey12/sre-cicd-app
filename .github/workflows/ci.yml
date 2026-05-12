@@ -102,3 +102,21 @@ jobs:
           docker tag gaurav0524/sre-cicd-app:${{ github.sha }} gaurav0524/sre-cicd-app:latest
           docker push gaurav0524/sre-cicd-app:${{ github.sha }}
           docker push gaurav0524/sre-cicd-app:latest
+
+  notify-on-failure:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    needs: [tests-complete, build, security-scan]
+    if: failure()
+    steps:
+      - name: Send failure notification
+        run: |
+          curl -X POST https://webhook.site/82ffb869-47eb-4b7d-9d99-88342eba9200 \
+            -H "Content-Type: application/json" \
+            -d '{
+              "status": "FAILED",
+              "repo": "${{ github.repository }}",
+              "branch": "${{ github.ref_name }}",
+              "commit": "${{ github.sha }}",
+              "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }'
